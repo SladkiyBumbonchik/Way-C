@@ -1,3 +1,2 @@
 # Way-C top
-mop
-xas
+m
