@@ -7,21 +7,13 @@ internal class Program
     private static void Main(string[] args)
 
     {
-        var listOfTodoItems = new List<string>(); // тоже самое, что new string[] {};
+        var listOfTodoItems = new List<string>(); 
         bool appShouldWork = true;
-        /*Консольное прилоожение, выполняющее несколько команд
-        add-todo
-        rm-todo
-        list-todos
-        exit
-        */
-        // дать справку по командам 
-        // НАЧАЛО! (while)
-        //while(possibleComand.Equals("add-todo", StringComparison.OrdinalIgnoreCase));
+
+        Console.WriteLine("Команда \"add-todo\" добавляет дело в лист.\nКоманда \"rm-todo\" удаляет дело из листа.\nКоманда \"list-todos\" вызывает список дел.\nКоманда \"exit\" позволяет выйти из листа дел\n\nВведите действие");
         while (appShouldWork)
         {
-
-            var userInput = Console.ReadLine(); /*"add-todo позвонить в сервис";*/ /*"rm-todo 0";*/
+            var userInput = Console.ReadLine(); 
             var stringElements = userInput.Split(' '); // Создает массив, чтобы по нему проверить первый элемент и на основе его понять какую команду вызвать
 
             if (stringElements.Length == 0)
@@ -32,18 +24,23 @@ internal class Program
 
             // получить первый элемент массива
             var possibleComand = stringElements[0];
-            // узнать, является ли он текстом какой-либо команды
-            //var commandDefinitions = new Dictionary<string, Func<string>>;
+            if (possibleComand.Equals("list-todos", StringComparison.OrdinalIgnoreCase))
+            {
+            foreach (var todoItem in listOfTodoItems)
+            {
+                Console.WriteLine(todoItem);
+            }
+            continue;
+            }
+       
             if (possibleComand.Equals("add-todo", StringComparison.OrdinalIgnoreCase)) // эквивалент
             {
-                // если является, то запустить код (метод) соответствующей команды
-                // если нет, то выдать "сообщение об ошибке" (любого формата или вида), и вернуться в начало
                 if (string.IsNullOrWhiteSpace(userInput.Substring(8)))
                     Console.WriteLine("Вы не прописали дело, необходимое к добавлению в лист");
                 else
                 {
-                    var index = AddTodo(listOfTodoItems, userInput[9..]);
-                    Console.WriteLine($"Дело {userInput[9..]} создано, номер {index}");
+                    var infoTodoitems = AddTodo(listOfTodoItems, userInput[9..]);
+                    Console.WriteLine(infoTodoitems);
                 }
                 continue;
             }
@@ -55,34 +52,35 @@ internal class Program
                     Console.WriteLine("Вы не указали какое дело хотели бы удалить из списка");
                     continue;
                 }
-              
-                int itemIndex = int.Parse(stringElements[1]);
-                var index = RemoveTodoitem(listOfTodoItems, itemIndex);
-                Console.WriteLine(index);
-                continue;
+
+                if (int.TryParse(stringElements[1], out int itemIndex))
+                {
+                    var todoItemDeletionResult = RemoveTodoitem(listOfTodoItems, itemIndex);
+                    Console.WriteLine(todoItemDeletionResult);
+                    continue;
+                }
+                else
+                {
+                    Console.WriteLine("Введите целочисленное значение");
+                    continue;
+                }
             }
             //Описать другие команды 
             if (possibleComand.StartsWith("exit"))
 
-
-            {
                 appShouldWork = false;
-            }
 
             else
                 Console.WriteLine("Такой команды не существует");
-
         }
     }
 
     static string AddTodo(List<string> listOfTodoItems, string text)
     {
-        // найти способ сохранить текст команды (с идентификатором) в памяти
-        //
         listOfTodoItems.Add(text);
         var index = listOfTodoItems.IndexOf(text);
-        return index.ToString();
-    }
+        return $"Дело \"{text}\" под номером {index} создано";
+    }   
 
     static string RemoveTodoitem(List<string> listOfTodoItems, int itemIndex)
     {
@@ -97,8 +95,8 @@ internal class Program
             return $"Дело удалено, № {itemIndex}";
         }
 
-        else 
-        return "Дела под таким номером не существует";
+        else
+            return "Дела под таким номером не существует";
 
     }
 }
